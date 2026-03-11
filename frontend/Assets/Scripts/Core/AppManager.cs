@@ -14,13 +14,28 @@ public class AppManager : MonoBehaviour
 
     private void Start()
     {
-        // For now, we don't have the real WebSocket implementation, 
-        // so this variable will be null. We will assign it in the next step.
-        // networkService = new WebSocketNetworkClient(); 
+        // Get the network service attached to this object (or another one)
+        // This is where Dependency Injection happens!
+        networkService = GetComponent<INetworkService>();
+
+        if (networkService != null)
+        {
+            // Subscribe to network events
+            networkService.OnConnected += () => Debug.Log("[CORE] Connected to server!");
+            networkService.OnMessageReceived += OnNetworkMessageReceived;
+            networkService.OnError += (err) => Debug.LogError($"[CORE] Network Error: {err}");
+
+            // Initiate the connection
+            Debug.Log("[CORE] Attempting to connect...");
+            networkService.Connect("ws://localhost:8080");
+        }
+        else
+        {
+            Debug.LogError("[CORE] No INetworkService found! Please attach WebSocketService to this GameObject.");
+        }
 
         if (inputHandler != null)
         {
-            // Subscribe to the input event
             inputHandler.OnUserAction += HandleUserAction;
         }
     }
