@@ -24,7 +24,7 @@ public class InputHandler : MonoBehaviour
         // Detect any key press or mouse click
         if (Input.anyKeyDown)
         {
-            if (Input.GetKeyDown(KeyCode.Y) || Input.GetKeyDown(KeyCode.y))
+            if (Input.GetKeyDown(KeyCode.Y))
             {
                 OnUserAction?.Invoke();
                 // Disable input after the first successful action to prevent spamming
@@ -33,10 +33,8 @@ public class InputHandler : MonoBehaviour
             else
             {
                 OnInvalidInput?.Invoke("Invalid input! Please press Y to interact.");
-            } 
+            }    
 
-            OnUserAction?.Invoke(); 
-                       
         }
     }
 
