@@ -1,4 +1,5 @@
 using UnityEngine;
+using UnityEngine.UI;
 
 /**
  * The central controller that connects the Network and Input layers 
@@ -7,6 +8,8 @@ using UnityEngine;
 public class AppManager : MonoBehaviour
 {
     [SerializeField] private InputHandler inputHandler;
+
+    [SerializeField] private Text uiText;
     
     // We use the Interface here, not a concrete WebSocket class!
     // This makes it 100% loosely coupled.
@@ -63,9 +66,26 @@ public class AppManager : MonoBehaviour
         {
             case "SHOW_WELCOME_MESSAGE":
                 Debug.Log($"[CORE] Server says: {command.payload}");
+                if (uiText != null) uiText.text = command.payload;
                 // Enable the input handler to wait for user interaction
                 inputHandler.SetInputActive(true);
                 break;
+            
+            case "SHOW_TIMEOUT_MESSAGE":
+                Debug.Log($"[CORE] Server says: {command.payload}");
+                if (uiText != null) uiText.text = command.payload;
+                break;
+            
+            case "SHOW_GOODBYE_MESSAGE":
+                Debug.Log($"[CORE] Server says: {command.payload}");
+                if (uiText != null) uiText.text = command.payload;
+                break;
+
+            case "SHOW_ACK_MESSAGE":
+                Debug.Log($"[CORE] Server says: {command.payload}");
+                if (uiText != null) uiText.text = command.payload;
+                break;
+
             default:
                 Debug.LogWarning($"[CORE] Unknown action: {command.action}");
                 break;
@@ -78,12 +98,14 @@ public class AppManager : MonoBehaviour
    private void HandleUserAction()
     {
         Debug.Log("[CORE] User interaction detected. Sending response to server...");
+
+        if (uiText != null) uiText.text = "Sending response to server...";
         
         // Create the response object
         ClientResponse response = new ClientResponse
         {
             type = "HANDSHAKE_RESPONSE",
-            payload = "Hello Server, I am here and clicked!"
+            payload = "Hello Server, I am here !"
         };
 
         // Serialize to JSON and send it back to the server
@@ -93,7 +115,7 @@ public class AppManager : MonoBehaviour
 
     private void OnDestroy()
     {
-        // Always unsubscribe from events to prevent memory leaks!
+        // unsubscribe from events 
         if (inputHandler != null)
         {
             inputHandler.OnUserAction -= HandleUserAction;

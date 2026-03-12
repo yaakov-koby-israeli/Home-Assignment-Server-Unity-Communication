@@ -1,5 +1,3 @@
-// frontend/Assets/Scripts/Network/WebSocketService.cs
-
 using System;
 using System.Collections.Concurrent;
 using System.Net.WebSockets;

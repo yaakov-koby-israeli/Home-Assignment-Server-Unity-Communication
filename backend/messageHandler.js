@@ -1,5 +1,3 @@
-// backend/messageHandler.js
-
 /**
  * Creates the handshake command to send to the client.
  * We use JSON to establish a clear communication contract.
@@ -40,5 +38,35 @@ const handleClientMessage = (rawMessage) => {
   }
 };
 
+const createAckCommand = () => {
+  return JSON.stringify({
+    type: "COMMAND",
+    action: "SHOW_ACK_MESSAGE",
+    payload: "Handshake Complete! Server received your message :)",
+  });
+};
+
+const createTimeoutCommand = () => {
+  return JSON.stringify({
+    type: "COMMAND",
+    action: "SHOW_TIMEOUT_MESSAGE",
+    payload: "Are you Here ? (Press any key to confirm)",
+  });
+};
+
+const createGoodbyeCommand = () => {
+  return JSON.stringify({
+    type: "COMMAND",
+    action: "SHOW_GOODBYE_MESSAGE",
+    payload: "See you next time! Goodbye! :)",
+  });
+};
+
 // Export functions so the server (and Jest tests) can use them
-module.exports = { createHandshakeCommand, handleClientMessage };
+module.exports = {
+  createHandshakeCommand,
+  handleClientMessage,
+  createAckCommand,
+  createTimeoutCommand,
+  createGoodbyeCommand,
+};
