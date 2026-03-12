@@ -6,7 +6,7 @@ const createHandshakeCommand = () => {
   return JSON.stringify({
     type: "COMMAND",
     action: "SHOW_WELCOME_MESSAGE",
-    payload: "We are glad you are here! Please press any key to confirm.",
+    payload: "We are glad you are here! Please press y to confirm.",
   });
 };
 
@@ -25,6 +25,13 @@ const handleClientMessage = (rawMessage) => {
           `[LOGIC] Client confirmed handshake with message: ${parsedMessage.payload}`,
         );
         break;
+
+      case "INVALID_KEY_PRESSED":
+        console.log(
+          `[LOGIC] Client is trying to interact: ${parsedMessage.payload}`,
+        );
+        break;
+
       default:
         console.warn(
           `[LOGIC] Received unknown message type: ${parsedMessage.type}`,
@@ -42,7 +49,8 @@ const createAckCommand = () => {
   return JSON.stringify({
     type: "COMMAND",
     action: "SHOW_ACK_MESSAGE",
-    payload: "Handshake Complete! Server received your message :)",
+    payload:
+      "Handshake Complete! Server received your message ! Connection is Open :)",
   });
 };
 

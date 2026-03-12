@@ -7,6 +7,8 @@ const {
   createGoodbyeCommand,
 } = require("./messageHandler");
 
+const ClientTimer = require("./timerManager");
+
 const PORT = 8080;
 const clientServerConnection = new WebSocket.Server({ port: PORT });
 
@@ -18,35 +20,23 @@ clientServerConnection.on("connection", (ws) => {
   ws.send(handshakeCommand);
   console.log(`[NETWORK] Handshake command sent.`);
 
-  // Set up a timeout to detect inactivity (e.g., no response from client after 10 seconds)
-  let disconnectTimeout;
-  let warningTimeout = setTimeout(() => {
-    console.log(`[NETWORK] Client inactive for 10 seconds. Sending warning...`);
-    ws.send(createTimeoutCommand());
-
-    disconnectTimeout = setTimeout(() => {
-      console.log(`[NETWORK] Disconnecting inactive client.`);
-      if (ws.readyState === WebSocket.OPEN) {
-        ws.send(createGoodbyeCommand());
-        ws.close();
-      }
-    }, 5000);
-  }, 10000);
+  // Initialize a timer manager for this client connection
+  const clientTimer = new ClientTimer(ws);
+  clientTimer.start();
 
   // 2. Listen for client responses
   ws.on("message", (message) => {
     // Pass raw data to the logic layer - the server is decoupled from message content
     const parsedMessage = handleClientMessage(message);
 
-    // if we get msg from client confirming handshake, we can send an ACK command back
+    // if client pressed a key confirming handshake, we can send an ACK command back
     if (parsedMessage && parsedMessage.type === "HANDSHAKE_RESPONSE") {
-      clearTimeout(warningTimeout); // Clear the warning timeout since we got a response
-      if (disconnectTimeout) {
-        clearTimeout(disconnectTimeout);
-      }
+      clientTimer.clear(); // Clear the warning timeout since we got a response
       const ackCommand = createAckCommand();
       console.log("[NETWORK] Timeout cancelled, client is active.");
       ws.send(ackCommand);
+    } else if (parsedMessage && parsedMessage.type === "INVALID_KEY_PRESSED") {
+      clientTimer.reset();
     }
   });
 
@@ -55,10 +45,7 @@ clientServerConnection.on("connection", (ws) => {
     ws.send(createGoodbyeCommand());
 
     // Clear any pending timeouts when client disconnects
-    clearTimeout(warningTimeout);
-    if (disconnectTimeout) {
-      clearTimeout(disconnectTimeout);
-    }
+    clientTimer.clear();
 
     ws.close(); // Ensure the connection is closed
   });
@@ -66,10 +53,8 @@ clientServerConnection.on("connection", (ws) => {
   ws.on("error", (error) => {
     console.error(`[NETWORK] WebSocket error: ${error.message}`);
     // Clear any pending timeouts when client disconnects
-    clearTimeout(warningTimeout);
-    if (disconnectTimeout) {
-      clearTimeout(disconnectTimeout);
-    }
+    clientTimer.clear();
+    ws.close(); // Ensure the connection is closed on error
   });
 });
 
