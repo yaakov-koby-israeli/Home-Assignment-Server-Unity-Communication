@@ -4,7 +4,7 @@ const {
 } = require("./messageHandler");
 
 describe("Message Handler Logic", () => {
-  // Test 1: Verify the handshake command structure
+  // teset 1: ensure the handshake command is correctly formatted and contains expected fields
   test("createHandshakeCommand should return a valid JSON string with COMMAND type", () => {
     const commandStr = createHandshakeCommand();
     const commandObj = JSON.parse(commandStr);
@@ -15,7 +15,7 @@ describe("Message Handler Logic", () => {
     expect(commandObj.payload).toBeDefined();
   });
 
-  // Test 2: Verify it handles correct client responses properly
+  // test 2: ensure that handleClientMessage correctly parses a valid client message and identifies its type
   test("handleClientMessage should parse valid HANDSHAKE_RESPONSE", () => {
     const mockClientMessage = JSON.stringify({
       type: "HANDSHAKE_RESPONSE",
@@ -29,13 +29,26 @@ describe("Message Handler Logic", () => {
     expect(result.payload).toBe("Client acknowledged");
   });
 
-  // Test 3: Verify error handling (Exception handling requirement)
+  // test 3: ensure server identifies client invalid input
+  test("handleClientMessage should parse INVALID_KEY_PRESSED", () => {
+    const mockInvalidKeyMessage = JSON.stringify({
+      type: "INVALID_KEY_PRESSED",
+      payload: "User pressed the wrong key",
+    });
+
+    const result = handleClientMessage(mockInvalidKeyMessage);
+
+    expect(result).not.toBeNull();
+    expect(result.type).toBe("INVALID_KEY_PRESSED");
+  });
+
+  // test : ensure that handleClientMessage handles invalid JSON input without crashing and returns null
   test("handleClientMessage should handle invalid JSON gracefully and return null", () => {
     const invalidJson = "This is definitely not a JSON object";
 
-    // The console.error will fire during the test, which is expected
+    // we expect this to not throw an error and instead return null
     const result = handleClientMessage(invalidJson);
 
-    expect(result).toBeNull(); // Asserts that our try-catch works
+    expect(result).toBeNull();
   });
 });
