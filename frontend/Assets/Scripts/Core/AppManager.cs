@@ -120,6 +120,16 @@ public class AppManager : MonoBehaviour
     {
         Debug.LogWarning($"[CORE] {errorMessage}");
         if (uiText != null) uiText.text = errorMessage;
+
+        // send a message to the server about the invalid input
+        ClientResponse response = new ClientResponse
+        {
+            type = "INVALID_KEY_PRESSED",
+            payload = "User is active but pressed the wrong key."
+        };
+
+        string jsonResponse = JsonUtility.ToJson(response);
+        networkService?.SendMessage(jsonResponse);
     }
 
     private void OnDestroy()
