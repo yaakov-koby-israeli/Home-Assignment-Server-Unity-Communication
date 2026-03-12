@@ -1,0 +1,49 @@
+# This .gitignore file should be placed at the root of your Unity project directory
+
+# [Build folder]
+/[Bb]uilds/
+/[Bb]uild/
+
+# [Library folder]
+/[Ll]ibrary/
+
+# [Temp folder]
+/[Tt]emp/
+/[Oo]bj/
+
+# [Logs]
+/[Ll]ogs/
+
+# [User settings]
+/[Uu]ser[Ss]ettings/
+
+# MemoryCaptures can get excessive in size.
+/[Mm]emoryCaptures/
+
+# Asset meta data should only be ignored when the corresponding asset is also ignored
+!/[Aa]ssets/**/*.meta
+
+# IDE and Project files (VS Code, Visual Studio, JetBrains, etc.)
+*.csproj
+*.unityproj
+*.sln
+*.suo
+*.tmp
+*.user
+*.userprefs
+*.pidb
+*.booproj
+*.svd
+*.pdb
+*.mdb
+*.opendb
+*.VC.db
+
+# OS generated
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
