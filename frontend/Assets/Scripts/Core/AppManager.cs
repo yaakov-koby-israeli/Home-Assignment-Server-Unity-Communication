@@ -11,8 +11,7 @@ public class AppManager : MonoBehaviour
 
     [SerializeField] private Text uiText;
     
-    // We use the Interface here, not a concrete WebSocket class!
-    // This makes it 100% loosely coupled.
+    // use of the Interface here
     private INetworkService networkService;
 
     private void Start()
@@ -40,6 +39,7 @@ public class AppManager : MonoBehaviour
         if (inputHandler != null)
         {
             inputHandler.OnUserAction += HandleUserAction;
+            inputHandler.OnInvalidInput += HandleInvalidInput;
         }
     }
 
@@ -113,12 +113,22 @@ public class AppManager : MonoBehaviour
         networkService?.SendMessage(jsonResponse);
     }
 
+    /**
+     * Triggered when the user presses the wrong key.
+     */
+    private void HandleInvalidInput(string errorMessage)
+    {
+        Debug.LogWarning($"[CORE] {errorMessage}");
+        if (uiText != null) uiText.text = errorMessage;
+    }
+
     private void OnDestroy()
     {
         // unsubscribe from events 
         if (inputHandler != null)
         {
             inputHandler.OnUserAction -= HandleUserAction;
+            inputHandler.OnInvalidInput -= HandleInvalidInput;
         }
     }
 }

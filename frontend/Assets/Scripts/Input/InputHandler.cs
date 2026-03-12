@@ -7,8 +7,10 @@ using UnityEngine;
  */
 public class InputHandler : MonoBehaviour
 {
-    // Event triggered when the user presses any key or clicks the mouse
+    // Event triggered when the user presses Y/y
     public event Action OnUserAction;
+
+    public event Action<string> OnInvalidInput;
 
     // We keep this private so other classes can't randomly change the input state.
     // They must use the exposed public method to enable/disable it.
@@ -22,11 +24,19 @@ public class InputHandler : MonoBehaviour
         // Detect any key press or mouse click
         if (Input.anyKeyDown)
         {
-            // Trigger the event safely using the null-conditional operator
-            OnUserAction?.Invoke();
-            
-            // Disable input after the first successful action to prevent spamming
-            SetInputActive(false); 
+            if (Input.GetKeyDown(KeyCode.Y) || Input.GetKeyDown(KeyCode.y))
+            {
+                OnUserAction?.Invoke();
+                // Disable input after the first successful action to prevent spamming
+                SetInputActive(false); 
+            }
+            else
+            {
+                OnInvalidInput?.Invoke("Invalid input! Please press Y to interact.");
+            } 
+
+            OnUserAction?.Invoke(); 
+                       
         }
     }
 
@@ -39,7 +49,7 @@ public class InputHandler : MonoBehaviour
         isInputActive = active;
         if (active)
         {
-            Debug.Log("[INPUT] Listening for user interaction...");
+            Debug.Log("[INPUT] Listening for 'Y' key press...");
         }
     }
 }
