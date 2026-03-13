@@ -73,8 +73,7 @@ public class AppManager : MonoBehaviour
             
             case "SHOW_TIMEOUT_MESSAGE":
                 Debug.Log($"[CORE] Server says: {command.payload}");
-                if (uiText != null) uiText.text = command.payload;
-                inputHandler.SetInputActive(false); 
+                if (uiText != null) uiText.text = command.payload;                 
                 break;
             
             case "SHOW_GOODBYE_MESSAGE":
