@@ -12,6 +12,8 @@ const ClientTimer = require("./timerManager");
 const PORT = 8080;
 const clientServerConnection = new WebSocket.Server({ port: PORT });
 
+// clientServerConnection is the nodejs WebSocket server instance
+// ws is the individual client connection instance that we get when a client connects to the server
 clientServerConnection.on("connection", (ws) => {
   console.log(`[NETWORK] New client connected!`);
 

@@ -12,13 +12,14 @@ const createHandshakeCommand = () => {
 
 /**
  * Receives a raw message from the client, parses it, and decides the next action.
+ * this function for parse the massage and log the information
  */
 const handleClientMessage = (rawMessage) => {
   try {
     // Convert the incoming network buffer/string into a JS object
     const parsedMessage = JSON.parse(rawMessage);
 
-    // Simple switch case to handle different message types (can evolve into a Command Pattern)
+    // Simple switch case to handle different message types from the client
     switch (parsedMessage.type) {
       case "HANDSHAKE_RESPONSE":
         console.log(
