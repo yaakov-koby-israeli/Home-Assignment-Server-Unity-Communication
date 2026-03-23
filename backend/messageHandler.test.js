@@ -1,4 +1,5 @@
 const {
+  // ref to the real functions we want to test from messageHandler.js we want to test
   createHandshakeCommand,
   handleClientMessage,
 } = require("./messageHandler");
