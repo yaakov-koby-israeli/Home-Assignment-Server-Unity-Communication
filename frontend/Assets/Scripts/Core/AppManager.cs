@@ -14,11 +14,13 @@ public class AppManager : MonoBehaviour
     // use of the Interface here
     private INetworkService networkService;
 
+
+    // when client press play on unity this finction start first and we use it to initialize the network connection and subscribe to events
     private void Start()
     {
         // Get the network service attached to this object (or another one)
         // This is where Dependency Injection happens!
-        networkService = GetComponent<INetworkService>();
+        networkService = GetComponent<INetworkService>(); // this is our webSocket
 
         if (networkService != null)
         {
@@ -29,6 +31,7 @@ public class AppManager : MonoBehaviour
 
             // Initiate the connection
             Debug.Log("[CORE] Attempting to connect...");
+            // activate the connection to the server (we will see the real code in the webSocketService.cs)
             networkService.Connect("ws://localhost:8080");
         }
         else

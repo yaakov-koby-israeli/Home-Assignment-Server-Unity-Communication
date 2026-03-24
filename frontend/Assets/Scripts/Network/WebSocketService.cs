@@ -21,11 +21,14 @@ public class WebSocketService : MonoBehaviour, INetworkService
     
     // Thread-safe queues to pass data from background thread to Unity's Main Thread
     private ConcurrentQueue<string> messageQueue = new ConcurrentQueue<string>();
+
+    // here we save a real code snipp in the queue (queue work in fifo)
     private ConcurrentQueue<Action> mainThreadActions = new ConcurrentQueue<Action>();
 
     private void Update()
     {
         // Process network events on the Unity Main Thread
+        // try to see if we have msg from the server and if we have we invoke the event to notify the app manager
         while (mainThreadActions.TryDequeue(out Action action))
         {
             action?.Invoke();
@@ -45,12 +48,13 @@ public class WebSocketService : MonoBehaviour, INetworkService
 
         try
         {
+            // Here we (unity) connect to the server in a background thread
             Uri serverUri = new Uri(url);
             await websocket.ConnectAsync(serverUri, cancellationTokenSource.Token);
             
             mainThreadActions.Enqueue(() => OnConnected?.Invoke());
             
-            // Start listening for messages in the background
+            // Start listening for messages from the server in a background thread
             _ = ReceiveLoop(); 
         }
         catch (Exception ex)
@@ -84,6 +88,7 @@ public class WebSocketService : MonoBehaviour, INetworkService
         {
             try
             {
+                // Here we get the message from the server in a background threadr
                 WebSocketReceiveResult result = await websocket.ReceiveAsync(new ArraySegment<byte>(buffer), cancellationTokenSource.Token);
                 
                 if (result.MessageType == WebSocketMessageType.Close)
@@ -92,7 +97,9 @@ public class WebSocketService : MonoBehaviour, INetworkService
                     break;
                 }
 
+                // dcode the msg from bytes tostring
                 string message = Encoding.UTF8.GetString(buffer, 0, result.Count);
+                //we enqueue it to be processed on the main thread
                 messageQueue.Enqueue(message); // Safely pass to main thread
             }
             catch (Exception)

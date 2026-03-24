@@ -16,6 +16,7 @@ public class InputHandler : MonoBehaviour
     // They must use the exposed public method to enable/disable it.
     private bool isInputActive = false;
 
+    // this function runs every frame and checks for user input, but only if input is active
     private void Update()
     {
         // If input is not active, we do nothing

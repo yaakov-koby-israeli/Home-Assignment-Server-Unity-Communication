@@ -5,7 +5,7 @@ const {
 } = require("./messageHandler");
 
 describe("Message Handler Logic", () => {
-  // teset 1: ensure the handshake command is correctly formatted and contains expected fields
+  // test 1: ensure the handshake command is correctly formatted and contains expected fields (data validation)
   test("createHandshakeCommand should return a valid JSON string with COMMAND type", () => {
     const commandStr = createHandshakeCommand();
     const commandObj = JSON.parse(commandStr);
